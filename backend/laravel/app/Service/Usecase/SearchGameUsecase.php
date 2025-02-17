@@ -2,6 +2,9 @@
 
 namespace App\Service\Usecase;
 
+use App\Domain\Model\Game\Game;
+use App\Domain\Model\Game\GameId;
+use App\Domain\Model\Game\GameName;
 use App\Service\UsecaseInput\SearchGameInput;
 use App\Service\UsecaseOutput\SearchGameOutput;
 use App\Service\UsecaseOutputImpl\SearchGameOutputImpl;
@@ -11,7 +14,7 @@ class SearchGameUsecase
 {
     public function execute(SearchGameInput $input): SearchGameOutput
     {
-        $keyword = $input->getKeyword();
+        $keyword = $input->getKeyword()->value();
         $query = "search \"{$keyword}\"; fields name; limit 10;";
 
         $response = Http::withHeaders([
@@ -23,7 +26,12 @@ class SearchGameUsecase
         ->withBody($query, 'text/plain')
         ->post('https://api.igdb.com/v4/games');
 
-        $games = $response->json();
+        $games = array_map(static function (array $data) {
+            return new Game(
+                gameId: new GameId($data['id']),
+                gameName: new GameName($data['name']),
+            );
+        }, $response->json());
         
         return new SearchGameOutputImpl(games: $games);  
     }
