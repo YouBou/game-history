@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import mygamesData from './sample/mygames.json';
+import Link from 'next/link';
+
 type MygameData = {
     title: string;
     hard: string;
     releaseDate: string;
 };
+
 export default function Page() {
     const [data, setData] = useState<MygameData[]>([]);
 
@@ -23,6 +26,7 @@ export default function Page() {
                         <th>タイトル</th>
                         <th>ハード</th>
                         <th>リリース日</th>
+                        <th></th>
                     </tr>
                 </thead>
                 {data.map((data: any) => (
@@ -30,6 +34,7 @@ export default function Page() {
                         <td>{data.title}</td>
                         <td>{data.hard}</td>
                         <td>{data.releaseDate}</td>
+                        <td><Link href={`/mygames/${data.id}`}>詳細</Link></td>
                     </tr>
                 ))}
             </table>
