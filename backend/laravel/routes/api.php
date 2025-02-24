@@ -9,3 +9,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/games/search', [GameController::class, 'search']);
+Route::get('/games/{id}', [GameController::class, 'get'])
+    ->where(['id' => '[0-9]+']);
