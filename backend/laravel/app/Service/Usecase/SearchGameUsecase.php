@@ -15,7 +15,7 @@ class SearchGameUsecase
     public function execute(SearchGameInput $input): SearchGameOutput
     {
         $keyword = $input->getKeyword()->value();
-        $query = "search \"{$keyword}\"; fields name; limit 10;";
+        $query = $query = 'search "' . $keyword . '";fields name,game_localizations.region,game_localizations.cover.image_id,game_localizations.name;limit 10;';
 
         $response = Http::withHeaders([
             'Content-Type' => 'text/plain',
