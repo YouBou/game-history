@@ -15,6 +15,7 @@ class SearchGamePresenter
                 return [
                     'gameId' => $game->gameId()->value(),
                     'gameName' => $game->gameName()->value(),
+                    'coverUrl' => $game->coverUrl()->value(),
                 ];
             }, $output->getGames())
         );
