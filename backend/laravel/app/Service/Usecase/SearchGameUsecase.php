@@ -2,6 +2,7 @@
 
 namespace App\Service\Usecase;
 
+use App\Domain\Model\Game\CoverUrl;
 use App\Domain\Model\Game\Game;
 use App\Domain\Model\Game\GameId;
 use App\Domain\Model\Game\GameName;
@@ -26,12 +27,30 @@ class SearchGameUsecase
         ->withBody($query, 'text/plain')
         ->post('https://api.igdb.com/v4/games');
 
+        $filteredGames = array_values(
+            array_filter($response->json(), static function (array $data) {
+                return isset($data['game_localizations'][0]['region']) && $data['game_localizations'][0]['region'] === 3;
+            })
+        );
+
         $games = array_map(static function (array $data) {
+            $jpName = '';
+            $coverUrl = '';
+
+            foreach ($data['game_localizations'] as $gameLocalization) {
+                if ($gameLocalization['region'] === 3) {
+                    $jpName = $gameLocalization['name'];
+                    $coverUrl = isset($gameLocalization['cover']['url']) ? $gameLocalization['cover']['url'] : '';
+                    break;
+                }
+            }
+
             return new Game(
                 gameId: new GameId($data['id']),
-                gameName: new GameName($data['name']),
+                gameName: new GameName($jpName),
+                coverUrl: new CoverUrl($coverUrl),
             );
-        }, $response->json());
+        }, $filteredGames);
         
         return new SearchGameOutputImpl(games: $games);  
     }
