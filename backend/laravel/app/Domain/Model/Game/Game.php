@@ -10,6 +10,7 @@ class Game
     public function __construct(
         private readonly GameId $gameId,
         private readonly GameName $gameName,
+        private readonly CoverUrl $coverUrl,
     ) { 
     }
 
@@ -21,5 +22,10 @@ class Game
     public function gameName(): GameName
     {
         return $this->gameName;
+    }
+
+    public function coverUrl(): CoverUrl
+    {
+        return $this->coverUrl;
     }
 }
